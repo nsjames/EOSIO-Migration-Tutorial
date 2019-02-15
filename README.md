@@ -37,3 +37,9 @@
 
 `./tables.sh`
 
+
+
+### After you are done.
+
+You can use the `post_migration_set.sh` script or set the `post_migration.cpp` contract manually which
+removes all of the migration code and only leaves the new table.
