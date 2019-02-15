@@ -7,7 +7,7 @@
 
 -----
 
-2) Compile the contract using either the `./set.sh` script, or by issuing the following commands.
+2) Compile and set the contract using either the `./set.sh` script, or by issuing the following commands.
 
 `eosio-cpp --abigen --contract=migratetests migrate.cpp -o migrate.wasm`
 

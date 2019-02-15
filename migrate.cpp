@@ -6,21 +6,33 @@ CONTRACT migratetests : contract {
 
 private:
 
+    // This is the struct we are migrating TO
     TABLE new_struct {
         uint64_t    id;
         name        payer;
+
+        // WE ARE ADDING THIS PROPERTY
         std::string new_property = "migrated";
 
         uint64_t    primary_key() const { return id; }
     };
 
+    // This is the struct that we are migrating FROM
     TABLE old_struct {
         uint64_t    id;
         name        payer;
+
+        // WE ARE REMOVING THIS PROPERTY
         uint64_t    old_property;
 
         uint64_t    primary_key() const { return id; }
 
+        /***
+         * We are creating a simple method to take the old
+         * structure and migrate it into the new one.
+         * This allows granular mutability to do things like
+         * changing properties based on new structures.
+         */
         new_struct  toNew() const {
             new_struct n;
             n.id = id;
@@ -31,11 +43,17 @@ private:
 
     // This is the table that we will be migrating TO.
     // It is currently empty and will be filled with the new data
-    // We will change the name to "usedtable" only after migration.
+    // ----------------------------------------------------------
+    // When you are done migrating you will change the name to "usedtable"
+    // so that the rest of your contract's code uses the new table instead of the old.
     typedef eosio::multi_index<"newtable"_n, new_struct> NewTable;
 
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // !!! NOTICE THE TABLE NAME "usedtable" IS STILL REFERENCING THE OLD TABLE !!!
+    // UNCOMMENT AFTER MIGRATION
+    // You will also need to remove all migration code to clear references.
+//    typedef eosio::multi_index<"usedtable"_n, new_struct> UsedTable;
+
+
+    // This is the table we will be migrating FROM.
     typedef eosio::multi_index<"usedtable"_n, old_struct> UsedTable;
 
 
@@ -49,7 +67,10 @@ public:
         newTable(_self,_self.value){}
 
     /***
+     * Migrates the old table to a new one with structure changes.
+     * ------------------------------------
      * Keep running this method until it asserts.
+     * @return
      */
     ACTION migrate(){
         // Just asserting if no more rows to migrate.
@@ -78,6 +99,11 @@ public:
 
     }
 
+    /***
+     * Just inserts a dummy row into the old data table.
+     * Run multiple times to insert more rows.
+     * @return
+     */
     ACTION dummyrows(){
         usedTable.emplace(_self, [&](auto& row){
             row.id = usedTable.available_primary_key();
