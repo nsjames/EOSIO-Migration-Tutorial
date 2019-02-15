@@ -36,6 +36,11 @@ private:
         new_struct  toNew() const {
             new_struct n;
             n.id = id;
+
+            // !IMPORTANT!
+            // If that payer is not part of this migration you can not have them
+            // pay for the row. You might want to handle that by doing _self as migration payer
+            // and on the next time they touch the row have them re-assume RAM ownership.
             n.payer = payer;
             return n;
         }
