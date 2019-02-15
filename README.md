@@ -10,6 +10,7 @@
 2) Compile the contract using either the `./set.sh` script, or by issuing the following commands.
 
 `eosio-cpp --abigen --contract=migratetests migrate.cpp -o migrate.wasm`
+
 `cleos set contract migratetests ../ migrate.wasm migrate.abi -p migratetests@active`
 
 -----
